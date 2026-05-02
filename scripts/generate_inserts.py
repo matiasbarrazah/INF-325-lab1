@@ -30,7 +30,8 @@ def read_xlsx(path):
         for i, row in enumerate(rows):
             vals = [cell_value(c) for c in row.findall('{http://schemas.openxmlformats.org/spreadsheetml/2006/main}c')]
             if i == 0:
-                header = vals
+                # normalizar nombres de columnas (quitar espacios al inicio/final)
+                header = [h.strip() for h in vals]
             else:
                 data.append(dict(zip(header, vals)))
     return header, data
@@ -60,12 +61,12 @@ def generate(data, out_dir):
             region = row.get('REGION','')
             matriculado = row.get('MATRICULADO','')
             # common values
-            cols = ['CARRERA','MATRICULADO','PERIODO','CEDULA','SEXO','PREFERENCIA','FACULTAD','PUNTAJE','GRUPO_DEPEN','REGION','LATITUD','LONGITUD','PTJE_NEM','PSU_PROMLM','PACE','GRATUIDAD ']
+            cols = ['CARRERA','MATRICULADO','PERIODO','CEDULA','SEXO','PREFERENCIA','FACULTAD','PUNTAJE','GRUPO_DEPEN','REGION','LATITUD','LONGITUD','PTJE_NEM','PSU_PROMLM','PACE','GRATUIDAD']
             # prepare value list function
             def row_vals(r):
                 vals = []
                 for c in cols:
-                    is_text = c in {'CEDULA','CARRERA','SEXO','FACULTAD','GRUPO_DEPEN','REGION','PACE','GRATUIDAD ','MATRICULADO'}
+                    is_text = c in {'CEDULA','CARRERA','SEXO','FACULTAD','GRUPO_DEPEN','REGION','PACE','GRATUIDAD','MATRICULADO'}
                     vals.append(q(r.get(c,''), is_text))
                 return vals
 
