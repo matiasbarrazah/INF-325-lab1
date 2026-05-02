@@ -1,0 +1,110 @@
+1. Plantea un resumen y una introducción congruente con lo que tratará el trabajo objeto del informe	
+EL
+10 puntos
+CL
+8 puntos
+L
+5.5 puntos
+PL
+3 puntos
+NL
+0 puntos
+2. Implementa la arquitectura de Cassandra según lo establecido en el requisito Nro. 1	
+EL
+10 puntos
+CL
+8 puntos
+L
+5.5 puntos
+PL
+3 puntos
+NL
+0 puntos
+3. Implementa el diseño físico de la base de datos de acuerdo al requisito Nro. 2 justificando en base a la regla 1 y regla 2 las decisiones.	
+El
+10 puntos
+Cl
+8 puntos
+L
+5.5 puntos
+PL
+3 puntos
+NL
+0 puntos
+4. Diseña y Construye las consultas CQL conforme al requisito Nro. 3	
+EL
+10 puntos
+CL
+8 puntos
+L
+5.5 puntos
+PL
+3 puntos
+NL
+0 puntos
+5. Implementa la integración de Cassandra con Power BI de acuerdo al requisito Nro. 4	
+EL
+10 puntos
+CL
+8 puntos
+L
+5.5 puntos
+PL
+3 puntos
+NL
+0 puntos
+6. Evidencia la consistencia con el método Three y disponibilidad de los servicios Cassandra según el requisito Nro. 5 (sin que el usuario se percate del problema )	
+EL
+10 puntos
+CL
+8 puntos
+L
+5.5 puntos
+PL
+3 puntos
+NL
+0 puntos
+7. Desarrolla las conclusiones coherentes con el desarrollo del trabajo e identifica los aspectos relevantes	
+EL
+10 puntos
+CL
+8 puntos
+L
+5.5 puntos
+PL
+3 puntos
+NL
+0 puntos
+8. La presentación y exposición del trabajo es organizada y clara	
+El
+10 puntos
+CL
+8 puntos
+L
+5.5 puntos
+PL
+3 puntos
+NL
+0 puntos
+9. La exposición se realiza dentro del tiempo establecido	
+EL
+10 puntos
+CL
+8 puntos
+L
+5.5 puntos
+PL
+3 puntos
+NL
+0 puntos
+10. Se responden las preguntas planteadas en la exposición	
+EL
+10 puntos
+CL
+8 puntos
+L
+5.5 puntos
+PL
+3 puntos
+NL
+0 puntos

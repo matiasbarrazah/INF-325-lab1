@@ -1,0 +1,90 @@
+services:
+  cassandra-1:
+    image: cassandra:4.1.5
+    container_name: cassandra-1
+    hostname: cassandra-1
+    environment:
+      CASSANDRA_CLUSTER_NAME: INF325_Lab1
+      CASSANDRA_DC: datacenter1
+      CASSANDRA_RACK: rack1
+      CASSANDRA_ENDPOINT_SNITCH: GossipingPropertyFileSnitch
+      CASSANDRA_SEEDS: cassandra-1
+      MAX_HEAP_SIZE: 512M
+      HEAP_NEWSIZE: 128M
+    ports:
+      - "9042:9042"
+    volumes:
+      - cassandra1-data:/var/lib/cassandra
+    healthcheck:
+      test: ["CMD-SHELL", "cqlsh localhost 9042 -e 'SELECT now() FROM system.local;' >/dev/null 2>&1"]
+      interval: 20s
+      timeout: 10s
+      retries: 18
+      start_period: 180s
+    networks:
+      - cassandra-net
+
+  cassandra-2:
+    image: cassandra:4.1.5
+    container_name: cassandra-2
+    hostname: cassandra-2
+    depends_on:
+      cassandra-1:
+        condition: service_healthy
+    environment:
+      CASSANDRA_CLUSTER_NAME: INF325_Lab1
+      CASSANDRA_DC: datacenter1
+      CASSANDRA_RACK: rack1
+      CASSANDRA_ENDPOINT_SNITCH: GossipingPropertyFileSnitch
+      CASSANDRA_SEEDS: cassandra-1
+      MAX_HEAP_SIZE: 512M
+      HEAP_NEWSIZE: 128M
+    ports:
+      - "9142:9042"
+    volumes:
+      - cassandra2-data:/var/lib/cassandra
+    healthcheck:
+      test: ["CMD-SHELL", "cqlsh localhost 9042 -e 'SELECT now() FROM system.local;' >/dev/null 2>&1"]
+      interval: 20s
+      timeout: 10s
+      retries: 18
+      start_period: 180s
+    networks:
+      - cassandra-net
+
+  cassandra-3:
+    image: cassandra:4.1.5
+    container_name: cassandra-3
+    hostname: cassandra-3
+    depends_on:
+      cassandra-1:
+        condition: service_healthy
+    environment:
+      CASSANDRA_CLUSTER_NAME: INF325_Lab1
+      CASSANDRA_DC: datacenter1
+      CASSANDRA_RACK: rack1
+      CASSANDRA_ENDPOINT_SNITCH: GossipingPropertyFileSnitch
+      CASSANDRA_SEEDS: cassandra-1
+      MAX_HEAP_SIZE: 512M
+      HEAP_NEWSIZE: 128M
+    ports:
+      - "9242:9042"
+    volumes:
+      - cassandra3-data:/var/lib/cassandra
+    healthcheck:
+      test: ["CMD-SHELL", "cqlsh localhost 9042 -e 'SELECT now() FROM system.local;' >/dev/null 2>&1"]
+      interval: 20s
+      timeout: 10s
+      retries: 18
+      start_period: 180s
+    networks:
+      - cassandra-net
+
+volumes:
+  cassandra1-data:
+  cassandra2-data:
+  cassandra3-data:
+
+networks:
+  cassandra-net:
+    driver: bridge
