@@ -58,3 +58,15 @@ Cada tabla fue diseñada para responder una consulta específica con igualdad so
 
 - `docker-compose.yml`: despliegue del clúster.
 - `cql/schema.cql`: keyspace y tablas del modelo físico.
+
+## Evidencia de alta disponibilidad y consistencia
+
+Se ejecuto una prueba que detuvo el nodo `cassandra-2` y se verificaron consultas antes y despues sin que fallara la lectura de los datos replicados.
+
+- Resultados de consultas antes: [outputs/ha/queries_before.txt](outputs/ha/queries_before.txt)
+- Resultados de consultas con nodo caido: [outputs/ha/queries_after_stop.txt](outputs/ha/queries_after_stop.txt)
+- Estado del clúster (nodetool) antes: [outputs/ha/status_before.txt](outputs/ha/status_before.txt)
+- Estado del clúster (nodetool) despues de apagar cassandra-2: [outputs/ha/status_after_stop.txt](outputs/ha/status_after_stop.txt)
+- Logs resumidos: [outputs/ha/log_cassandra1.txt](outputs/ha/log_cassandra1.txt) (ver otros en la carpeta `outputs/ha`).
+
+Observacion: la consulta retorna resultados aun con `cassandra-2` detenido gracias al factor de replicacion 3; los archivos anteriores contienen capturas de la salida.
