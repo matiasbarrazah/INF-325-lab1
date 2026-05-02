@@ -56,7 +56,7 @@ Verifica que consultas sigan respondiendo con un nodo caido. Resultados en `outp
 | 1 | Cluster 3 nodos, SimpleStrategy, RF=3 | ✅ docker-compose.yml |
 | 2 | Diseño fisico (3 tablas + justificacion) | ✅ cql/schema.cql, docs/punto_1_2.md |
 | 3 | Consultas CQL (3 queries negocio) | ✅ cql/queries.cql, outputs/queries_raw.txt |
-| 4 | Integracion Power BI | 🔴 Data en CSVs, tu colega carga |
+| 4 | Integracion Power BI | 🔴 Datos disponibles para carga en Power BI Desktop |
 | 5 | Evidencia HA + consistencia | ✅ scripts/test_ha.sh, outputs/ha/ |
 
 ## Tablas del modelo
