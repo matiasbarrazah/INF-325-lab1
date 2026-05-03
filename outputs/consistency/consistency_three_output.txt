@@ -1,0 +1,31 @@
+Consistency level set to THREE.
+
+ carrera  | periodo | cedula   | puntaje
+----------+---------+----------+---------
+ MEDICINA |    2018 | 17107577 |   72895
+ MEDICINA |    2018 | 17187165 |   74490
+ MEDICINA |    2018 | 18570377 |   75230
+ MEDICINA |    2018 | 18618861 |   73790
+ MEDICINA |    2018 | 18656110 |   72760
+
+(5 rows)
+
+ carrera                      | region | periodo | cedula   | puntaje
+------------------------------+--------+---------+----------+---------
+ INGENIERÍA CIVIL INFORMÁTICA |  MAULE |    2018 | 18331313 |   60225
+ INGENIERÍA CIVIL INFORMÁTICA |  MAULE |    2018 | 18476544 |   59130
+ INGENIERÍA CIVIL INFORMÁTICA |  MAULE |    2018 | 18576437 |   58020
+ INGENIERÍA CIVIL INFORMÁTICA |  MAULE |    2018 | 18681691 |   50640
+ INGENIERÍA CIVIL INFORMÁTICA |  MAULE |    2018 | 18981525 |   66490
+
+(5 rows)
+
+ facultad             | periodo | cedula   | carrera    | puntaje
+----------------------+---------+----------+------------+---------
+ CIENCIAS DE LA SALUD |    2020 | 20228897 | ENFERMERÍA |   74315
+ CIENCIAS DE LA SALUD |    2020 | 19696770 | ENFERMERÍA |   73870
+ CIENCIAS DE LA SALUD |    2020 | 19697810 | ENFERMERÍA |   73730
+ CIENCIAS DE LA SALUD |    2020 | 19928091 | ENFERMERÍA |   73670
+ CIENCIAS DE LA SALUD |    2020 | 19697311 | ENFERMERÍA |   72970
+
+(5 rows)
