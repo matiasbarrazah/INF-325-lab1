@@ -52,7 +52,7 @@ UN  172.21.0.3  136.72 KiB  16      100.0%            7490a6c7-3e16-48d8-8fbb-ea
 
 Cada nodo posee el 100 % efectivo de los datos gracias al factor de replicación 3.
 
-> **[CAPTURA]** Insertar aquí captura de pantalla de `docker compose ps` (3 nodos `healthy`) y `nodetool status` (3 nodos `UN`).
+![Clúster 3 nodos healthy y UN](captures/captura_req1_cluster.png)
 
 ---
 
@@ -111,7 +111,7 @@ Las partition keys usan columnas con cardinalidad útil para el negocio (`carrer
 **Regla 2 — Minimizar el número de particiones a leer:**
 Cada tabla fue diseñada para que la consulta pueda especificar igualdad sobre toda la partition key, resolviendo la lectura con exactamente **una partición** por consulta.
 
-> **[CAPTURA]** Insertar aquí captura de `cqlsh` ejecutando `DESCRIBE TABLES;` dentro del keyspace `universia_postulaciones`, mostrando las 3 tablas creadas.
+![DESCRIBE TABLES — 3 tablas del keyspace](captures/captura_req2_describe_tables.png)
 
 ---
 
@@ -183,7 +183,11 @@ ORDER BY puntaje DESC;
 (824 rows)
 ```
 
-> **[CAPTURA]** Insertar aquí capturas de `cqlsh` ejecutando cada una de las 3 consultas y mostrando los primeros resultados con el conteo total de filas.
+![Consulta Medicina — 182 filas](captures/captura_req3_consulta_medicina.png)
+
+![Consulta ICI Maule — 92 filas](captures/captura_req3_consulta_ici_maule.png)
+
+![Consulta Ciencias de la Salud — 824 filas](captures/captura_req3_consulta_ciencias_salud.png)
 
 ---
 
@@ -265,7 +269,7 @@ Consistency level set to THREE.
 
 La línea `Consistency level set to THREE.` confirma que los 3 nodos participaron en la lectura. Las mismas consultas se ejecutaron para las tablas de ICI Maule y Ciencias de la Salud con idénticos resultados, evidenciando que los datos están replicados y son consistentes en todo el clúster. El archivo completo con las 3 consultas se encuentra en `outputs/consistency/consistency_three_output.txt`.
 
-> **[CAPTURA]** Insertar aquí captura del terminal `cqlsh` mostrando `Consistency level set to THREE.` seguido de los resultados de las consultas.
+![CONSISTENCY THREE — resultados de las 3 tablas](captures/captura_req5_consistency_three.png)
 
 #### 5.2 Alta disponibilidad
 
@@ -297,15 +301,23 @@ DN  172.21.0.3  136.5 KiB   16      100.0%            rack1
 
 Las tres consultas retornaron exactamente el mismo número de filas (182 / 92 / 824) que con todos los nodos activos, sin errores. Cassandra redirigió automáticamente las lecturas a las réplicas disponibles (`cassandra-1` y `cassandra-3`), haciendo transparente la falla para el cliente.
 
-**Recuperación:** Al reiniciar `cassandra-2`, el nodo se reintegró al ring y sincronizó automáticamente, volviendo al estado `UN`.
+**Recuperación:** Al reiniciar el contenedor `cassandra-2` (`docker compose start cassandra-2`), el nodo se reintegró al ring y sincronizó sus datos automáticamente sin configuración adicional, volviendo al estado `UN`.
 
-> **[CAPTURA 1]** Insertar aquí `nodetool status` con los 3 nodos `UN` (antes de la falla) — disponible en `outputs/ha/status_before.txt`.
->
-> **[CAPTURA 2]** Insertar aquí `nodetool status` con 1 nodo `DN` (cassandra-2 detenido) — disponible en `outputs/ha/status_after_stop.txt`.
->
-> **[CAPTURA 3]** Insertar aquí captura del dashboard Power BI mostrando datos correctos con el nodo caído.
->
-> **[CAPTURA 4]** Insertar aquí `nodetool status` con los 3 nodos `UN` recuperados — disponible en `outputs/ha/status_after_start.txt`.
+**Captura 1 — Estado inicial (3 nodos `UN`):**
+
+![nodetool status — 3 nodos UN antes de la falla](captures/captura_req1_cluster.png)
+
+**Captura 2 — cassandra-2 detenido (nodo `DN`):**
+
+![nodetool status — cassandra-2 DN](captures/captura_req5_ha_nodetool.png)
+
+**Captura 3 — Power BI con nodo caído (datos íntegros):**
+
+![Power BI dashboard con cassandra-2 caído](captures/captura_req5_ha_powerbi.png)
+
+**Captura 4 — Recuperación (3 nodos `UN` restaurados):**
+
+![nodetool status — 3 nodos UN recuperados](captures/captura_req5_ha_recovery.png)
 
 ---
 
