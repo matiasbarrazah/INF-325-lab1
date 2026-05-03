@@ -52,7 +52,7 @@ UN  172.21.0.3  136.72 KiB  16      100.0%            7490a6c7-3e16-48d8-8fbb-ea
 
 Cada nodo posee el 100 % efectivo de los datos gracias al factor de replicación 3.
 
-> **[TAREA MANUAL]** Incluir captura de pantalla de `docker compose ps` y `nodetool status` mostrando los 3 nodos `healthy`/`UN`.
+> **[CAPTURA]** Insertar aquí captura de pantalla de `docker compose ps` (3 nodos `healthy`) y `nodetool status` (3 nodos `UN`).
 
 ---
 
@@ -111,7 +111,7 @@ Las partition keys usan columnas con cardinalidad útil para el negocio (`carrer
 **Regla 2 — Minimizar el número de particiones a leer:**
 Cada tabla fue diseñada para que la consulta pueda especificar igualdad sobre toda la partition key, resolviendo la lectura con exactamente **una partición** por consulta.
 
-> **[TAREA MANUAL]** Incluir captura de pantalla de `cqlsh` mostrando la ejecución de `DESCRIBE TABLES` y las 3 tablas creadas en el keyspace `universia_postulaciones`.
+> **[CAPTURA]** Insertar aquí captura de `cqlsh` ejecutando `DESCRIBE TABLES;` dentro del keyspace `universia_postulaciones`, mostrando las 3 tablas creadas.
 
 ---
 
@@ -183,29 +183,50 @@ ORDER BY puntaje DESC;
 (824 rows)
 ```
 
-> **[TAREA MANUAL]** Incluir capturas de pantalla de la ejecución de las 3 consultas en `cqlsh` mostrando los resultados completos.
+> **[CAPTURA]** Insertar aquí capturas de `cqlsh` ejecutando cada una de las 3 consultas y mostrando los primeros resultados con el conteo total de filas.
 
 ---
 
 ### 2.4 Requisito 4 — Integración con Power BI Desktop
 
-La integración se realizó mediante una conexión ODBC directa al clúster Cassandra corriendo localmente en `localhost:9042`, sin importar los datos a un archivo intermedio.
+La integración se realizó mediante una conexión directa al clúster Cassandra corriendo localmente en `localhost:9042`, utilizando el conector nativo de Python de Power BI Desktop. Este método no requiere archivos intermedios — los datos fluyen directamente desde Cassandra a través de scripts Python hacia el modelo de Power BI.
 
 **Pasos realizados:**
 
-1. Se instaló el driver **Simba Cassandra ODBC** (versión 64-bit para Windows).
-2. Se configuró un DSN de usuario llamado `CassandraLab1` en el administrador ODBC de Windows (Orígenes de datos ODBC 64 bits), apuntando a `127.0.0.1:9042`, keyspace `universia_postulaciones`, sin autenticación.
-3. En Power BI Desktop se usó **Obtener datos → ODBC → CassandraLab1** y se ingresaron las tres consultas CQL como queries nativas.
+1. Se instalaron las dependencias Python necesarias: `cassandra-driver 3.30.0`, `pandas` y `pyasyncore` (compatibilidad con Python 3.13, que eliminó el módulo `asyncore`).
+2. En Power BI Desktop se configuró la ruta Python en **Archivo → Opciones → Creación de scripts de Python**, apuntando a `C:\Users\jmeza\AppData\Local\Programs\Python\Python313`.
+3. Se cargaron las tres tablas usando **Obtener datos → Script de Python**, ejecutando un script por cada consulta de negocio que conecta directamente a `127.0.0.1:9042` y retorna un DataFrame.
 4. Se construyó un tablero interactivo con:
-   - Tabla de postulantes de Medicina filtrable por período.
-   - Gráfico de barras de postulantes de Ciencias de la Salud por puntaje PSU.
-   - Tabla de ICI Maule por período.
-   - Segmentadores de período y carrera para navegación interactiva.
+   - Tabla de postulantes matriculados en **Medicina** (182 registros) filtrable por período.
+   - Tabla de postulantes matriculados en **Ingeniería Civil Informática** del Maule (92 registros).
+   - Gráfico de columnas de postulantes de **Ciencias de la Salud** por carrera y puntaje PSU (824 registros).
+   - Segmentador de período (2018, 2019, 2020) que filtra interactivamente la tabla de Medicina.
 
-> **[TAREA MANUAL]** Reemplazar este párrafo con las capturas de:
-> 1. Configuración del DSN ODBC (ventana de propiedades del origen).
-> 2. Power BI mostrando las 3 tablas cargadas en el panel de datos.
-> 3. El dashboard final con las visualizaciones.
+**Scripts utilizados** (disponibles en `scripts/powerbi_*.py`):
+
+```python
+import asyncore
+from cassandra.cluster import Cluster
+import pandas as pd
+
+cluster = Cluster(['127.0.0.1'], port=9042)
+session = cluster.connect('universia_postulaciones')
+rows = session.execute("""
+    SELECT carrera, periodo, cedula, facultad, puntaje
+    FROM postulantes_medicina_por_periodo
+    WHERE carrera = 'MEDICINA' AND matriculado = 'SI'
+""")
+df = pd.DataFrame(list(rows))
+cluster.shutdown()
+```
+
+> **[CAPTURA 1]** Insertar aquí captura del dashboard completo con los 3 visuales y el segmentador (período sin filtro).
+>
+> **[CAPTURA 2]** Insertar aquí captura del dashboard con período **2018** seleccionado.
+>
+> **[CAPTURA 3]** Insertar aquí captura del dashboard con período **2019** seleccionado.
+>
+> **[CAPTURA 4]** Insertar aquí captura del dashboard con período **2020** seleccionado.
 
 ---
 
@@ -244,7 +265,7 @@ Consistency level set to THREE.
 
 La línea `Consistency level set to THREE.` confirma que los 3 nodos participaron en la lectura. Las mismas consultas se ejecutaron para las tablas de ICI Maule y Ciencias de la Salud con idénticos resultados, evidenciando que los datos están replicados y son consistentes en todo el clúster. El archivo completo con las 3 consultas se encuentra en `outputs/consistency/consistency_three_output.txt`.
 
-> **[TAREA MANUAL]** Incluir captura de pantalla del terminal mostrando `Consistency level set to THREE.` y el resultado de las consultas.
+> **[CAPTURA]** Insertar aquí captura del terminal `cqlsh` mostrando `Consistency level set to THREE.` seguido de los resultados de las consultas.
 
 #### 5.2 Alta disponibilidad
 
@@ -278,11 +299,13 @@ Las tres consultas retornaron exactamente el mismo número de filas (182 / 92 / 
 
 **Recuperación:** Al reiniciar `cassandra-2`, el nodo se reintegró al ring y sincronizó automáticamente, volviendo al estado `UN`.
 
-> **[TAREA MANUAL]** Incluir capturas de pantalla de:
-> 1. `nodetool status` con 3 nodos `UN` (antes).
-> 2. `nodetool status` con 1 nodo `DN` (durante la falla).
-> 3. Power BI mostrando datos correctos con el nodo caído.
-> 4. `nodetool status` con 3 nodos `UN` (después de recuperación).
+> **[CAPTURA 1]** Insertar aquí `nodetool status` con los 3 nodos `UN` (antes de la falla) — disponible en `outputs/ha/status_before.txt`.
+>
+> **[CAPTURA 2]** Insertar aquí `nodetool status` con 1 nodo `DN` (cassandra-2 detenido) — disponible en `outputs/ha/status_after_stop.txt`.
+>
+> **[CAPTURA 3]** Insertar aquí captura del dashboard Power BI mostrando datos correctos con el nodo caído.
+>
+> **[CAPTURA 4]** Insertar aquí `nodetool status` con los 3 nodos `UN` recuperados — disponible en `outputs/ha/status_after_start.txt`.
 
 ---
 
@@ -294,7 +317,7 @@ Las tres consultas retornaron exactamente el mismo número de filas (182 / 92 / 
 
 3. **Docker simplifica significativamente el despliegue de clústeres multi-nodo locales.** La configuración de healthchecks y dependencias entre contenedores es clave para evitar race conditions durante el bootstrap, ya que Cassandra requiere que los nodos se unan al ring de forma secuencial.
 
-4. **La integración de Cassandra con herramientas de visualización como Power BI es directa mediante ODBC.** Esto permite construir tableros de control sobre datos distribuidos en tiempo real, con la ventaja de que la capa de almacenamiento es transparente para el analista de datos.
+4. **La integración de Cassandra con Power BI es directa mediante el conector Python nativo.** Sin necesidad de drivers ODBC adicionales, el conector Python de Power BI permite construir tableros de control sobre datos distribuidos en tiempo real, con la ventaja de que la capa de almacenamiento es transparente para el analista de datos.
 
 5. **La alta disponibilidad de Cassandra es operacional sin configuración adicional.** La falla de un nodo fue completamente transparente para el cliente: las consultas continuaron respondiendo con resultados idénticos, lo que valida la arquitectura propuesta para escenarios de producción con requisitos de disponibilidad continua.
 
